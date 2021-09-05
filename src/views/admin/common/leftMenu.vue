@@ -11,7 +11,7 @@
 					background-color="#545c64"
 					text-color="#fff"
 					active-text-color="#ffd04b"
-					style="height:630px"
+					style="height:750px"
 				>
 					<el-menu-item index="1">
 						<router-link to="/admin/all_list">
@@ -35,7 +35,7 @@
 						><router-link to="/admin/order_list"> <i class="el-icon-document"></i> <span>订单管理</span></router-link>
 					</el-menu-item>
 					<el-menu-item index="5"
-						><router-link to="/admin/customer_list">
+						><router-link to="/admin/comments_list">
 							<i class="el-icon-chat-dot-round"></i> <span>评论管理</span></router-link
 						>
 					</el-menu-item>

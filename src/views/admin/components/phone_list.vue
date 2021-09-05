@@ -86,7 +86,12 @@
 				<el-col class="dialog-t"
 					><span>相关简介:</span><span>{{ dataList.goods_content }}</span></el-col
 				>
-				<el-col class="dialog-t"><span>图片展示:</span><span>444</span></el-col>
+				<el-col class="dialog-t"
+					><span>图片展示:</span>
+					<div style="width:200px;height:200px">
+						<img :src="dataList.src" alt="" srcset="" width="100%" height="100%" />
+					</div>
+				</el-col>
 			</el-row>
 
 			<span slot="footer" class="dialog-footer">
@@ -204,7 +209,7 @@
 						><el-input type="textarea" v-model="editForm.goods_content" autocomplete="off" width="200px"></el-input
 					></el-col>
 				</el-form-item>
-				<!-- <el-form-item label="图片" ref="uploadElement" :label-width="formLabelWidth">
+				<el-form-item label="图片" ref="uploadElement" :label-width="formLabelWidth">
 					<el-input v-model="editForm.goods_img" v-if="false"></el-input>
 					<el-upload
 						class="avatar-uploader"
@@ -218,9 +223,10 @@
 						:auto-upload="false"
 					>
 						<img class="avatar" v-if="goods_img11" :src="goods_img11" alt="" />
+
 						<i v-else class="el-icon-plus avatar-uploader-icon"></i>
 					</el-upload>
-				</el-form-item> -->
+				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="dialogFormVisiblete = false">取 消</el-button>
@@ -274,7 +280,7 @@
 					goods_stype_id: "",
 					goods_content: "",
 					goods_total: "",
-					// goods_img: "",
+					goods_img: "",
 				},
 
 				formLabelWidth: "120px",
@@ -303,7 +309,8 @@
 			handleChange(file, fileList) {
 				this.goods_img11 = URL.createObjectURL(file.raw);
 				this.form.goods_img = file.name;
-				console.log(this.form.goods_img);
+				this.editForm.goods_img = file.name;
+				// console.log(this.form.goods_img);
 			},
 			beforeUpload(file) {
 				return true;
@@ -315,6 +322,14 @@
 						console.log(res);
 						if (res.data.statusCode === 200) {
 							this.$message.success(res.data.msg);
+							this.form.goods_name = "";
+							this.form.goods_price = "";
+							this.form.goods_origin = "";
+							this.form.goods_canshu = "";
+							this.form.goods_stype_id = "";
+							this.form.goods_content = "";
+							this.form.goods_total = "";
+							this.goods_img11 = "";
 						} else {
 							this.$message.error(res.data.msg);
 						}
@@ -345,6 +360,7 @@
 					if (res.status === 200) {
 						console.log(res);
 						this.dataList = res.data[0];
+						this.dataList.src = require("@/assets/img/mainImg/" + this.dataList.goods_img);
 					}
 				});
 			},
@@ -363,7 +379,8 @@
 				this.editForm.goods_content = row.goods_content;
 				this.editForm.goods_total = row.goods_total;
 				this.editForm.goods_origin = row.goods_origin;
-				this.editForm.goods_img = row.goods_img;
+				this.editForm.goods_img = row.src;
+				this.goods_img11 = row.src;
 			},
 
 			submitEditForm() {
@@ -410,10 +427,12 @@
 							return item.goods_stype_id != 9;
 						});
 						this.data.forEach((v, index) => {
+							v.src = require("@/assets/img/mainImg/" + v.goods_img);
 							v.key = v.goods_stype_id;
 							v.index = index;
 						});
 					})
+
 					.catch(err => {
 						console.log(err);
 					});

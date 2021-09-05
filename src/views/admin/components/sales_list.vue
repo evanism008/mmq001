@@ -59,7 +59,7 @@
 				<el-form-item label="密码" :label-width="formLabelWidth">
 					<el-col :span="20"><el-input v-model="form.admin_pwd" autocomplete="off"></el-input></el-col>
 				</el-form-item>
-				<el-form-item label="商品类型" :label-width="formLabelWidth">
+				<el-form-item label="职称类型" :label-width="formLabelWidth">
 					<el-select v-model="form.authonty" placeholder="请选择职称">
 						<el-option label="经理" value="经理"></el-option>
 						<el-option label="管理员" value="管理员"></el-option>

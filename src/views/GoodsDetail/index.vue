@@ -80,7 +80,11 @@
 			><h2 style="font-size:28px;color:#666666">评论详情</h2></el-divider
 		>
 		<!-- 评论详情 -->
-		<div style="width:80%;margin:20px auto;	padding-bottom:20px; border-bottom: 1px solid #f67000">
+		<div
+			style="width:80%;margin:20px auto;	padding-bottom:20px; border-bottom: 1px solid #f67000"
+			v-for="(item, i) in comData"
+			:key="i"
+		>
 			<el-row>
 				<el-col :span="3" :offset="1">
 					<el-avatar
@@ -89,7 +93,7 @@
 					></el-avatar>
 				</el-col>
 				<el-col :span="3" style="padding-top:50px;color:#E6A23C;font-size:16px">
-					<span>用户:哈哈侠</span>
+					<span>用户:{{ item.cno }}</span>
 				</el-col>
 				<el-col :span="16">
 					<el-row style="color:#f67000;font-size:26px"
@@ -106,16 +110,14 @@
 						</el-rate>
 					</el-row>
 					<el-row
-						><span style="line-height:25px"
-							>基于面向对象Python的编程的思想基础上设计的飞机大战游戏系统，游玩者可以通过操控飞机发射子弹对敌方进行射击并提高分数，躲避敌机的撞击存活下来；敌方飞机会在屏幕顶部随机生成.</span
-						></el-row
+						><span style="line-height:25px">{{ item.content }}</span></el-row
 					>
 					<el-row
-						><div style="width:100px;height:100px;margin-top:20px">
-							<img src="../../assets/img/mainImg/301.jpg" alt="" srcset="" width="100%" height="100%" /></div
+						><div style="width:100px;height:100px;margin-top:20px" v-if="item.src">
+							<img :src="item.src" alt="" srcset="" width="100%" height="100%" /></div
 					></el-row>
-					<el-row style="color:#9999">
-						2021-12-12 12:00
+					<el-row style="color:#9999;margin-top:10px">
+						{{ item.comDate }}
 					</el-row>
 				</el-col>
 			</el-row>
@@ -133,6 +135,7 @@
 				iconClasses: ["icon-rate-face-1", "icon-rate-face-2", "icon-rate-face-3"], // 等同于 { 2: 'icon-rate-face-1', 4: { value: 'icon-rate-face-2', excluded: true }, 5: 'icon-rate-face-3' }
 				num: 1,
 				data: [],
+				comData: [],
 				orderId: "",
 			};
 		},
@@ -204,10 +207,26 @@
 						this.data.src = require("@/assets/img/mainImg/" + this.data.goods_img);
 					});
 			},
+			//获取评论
+			getaddCom() {
+				this.$http.post("http://localhost:8080/getCom", {}).then(res => {
+					this.comData = res.data;
+					console.log(this.comData);
+					this.comData.forEach(function(ele) {
+						if (ele.imgs) {
+							ele.src = require("@/assets/img/pinglun/" + ele.imgs);
+						}
+					});
+					this.comData = this.comData.filter(item => {
+						return item.commentsStatus === 0;
+					});
+				});
+			},
 		},
 		//生命周期 - 创建完成（访问当前this实例）
 		created() {
 			this.getGoodsDtail();
+			this.getaddCom();
 		},
 		//生命周期 - 挂载完成（访问DOM元素）
 		mounted() {},

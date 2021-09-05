@@ -294,7 +294,7 @@ app.get("/goodsdata", function(req, resp, next) {
 app.post("/getsearchData", function(req, resp, next) {
 	let search = req.body.search;
 	connection.query(
-		`SELECT * FROM shop_goods where goods_name LIKE '${search}%' or goods_price LIKE '${search}%' `,
+		`SELECT * FROM shop_goods where goods_name LIKE '%${search}%' or goods_price LIKE '%${search}%' or goods_canshu LIKE '%${search}%'`,
 		function(err, res, fields) {
 			if (err) {
 				throw err;
@@ -401,9 +401,9 @@ app.post("/updateData", function(req, resp, next) {
 	let content = req.body.goods_content;
 	let total = req.body.goods_total;
 	let origin = req.body.goods_origin;
-	// let img = req.body.goods_img;
+	let img = req.body.goods_img;
 	connection.query(
-		`UPDATE shop_goods SET goods_name = '${name}',goods_price ='${price}',goods_canshu='${canshu}',goods_stype_id='${stype_id}',goods_content = '${content}',goods_total='${total}',goods_origin='${origin}'
+		`UPDATE shop_goods SET goods_name = '${name}',goods_price ='${price}',goods_img='${img}',goods_canshu='${canshu}',goods_stype_id='${stype_id}',goods_content = '${content}',goods_total='${total}',goods_origin='${origin}'
 	WHERE goods_no = '${no}'`,
 		function(err, res, fields) {
 			if (err) {
@@ -560,15 +560,19 @@ app.post("/getOrderCount", function(req, resp, next) {
 //处理订单状态
 app.post("/proState", function(req, resp, next) {
 	let orderId = req.body.orderId;
-	connection.query(`UPDATE shop_order SET  processingState= 0 where orderId="${orderId}"`, function(err, res, fields) {
-		if (err) {
-			resp.send({ statusCode: 0, msg: "处理失败" });
-			return;
-		} else {
-			resp.send({ statusCode: 200, msg: "处理成功" });
-			return;
+	let processingTime = new Date().Format("yyyy-MM-dd hh:mm:ss");
+	connection.query(
+		`UPDATE shop_order SET  processingState= 0,processingTime='${processingTime}' where orderId="${orderId}"`,
+		function(err, res, fields) {
+			if (err) {
+				resp.send({ statusCode: 0, msg: "处理失败" });
+				return;
+			} else {
+				resp.send({ statusCode: 200, msg: "处理成功" });
+				return;
+			}
 		}
-	});
+	);
 });
 //删除订单
 app.post("/deleteOrder", function(req, resp, next) {
@@ -640,9 +644,11 @@ app.post("/searchOrder", function(req, resp, next) {
 	);
 });
 //商品排名
+// "select goods_name,goods_price,goods_no, sum(goods_amount) from shop_order group by goods_no order by 1",
 app.post("/getRank", function(req, resp, next) {
 	connection.query(
-		"select goods_name,goods_price,goods_no, sum(goods_amount) from shop_order group by goods_name order by 1",
+		"SELECT goods_name,goods_price,goods_no, sum(goods_amount) FROM shop_order GROUP  BY goods_no order by sum(goods_amount) DESC LIMIT 0,10",
+
 		function(err, res, fields) {
 			if (err) {
 				resp.send({ statusCode: 0, msg: "查询失败" });
@@ -753,6 +759,81 @@ app.post("/addAdmin", function(req, resp, next) {
 			}
 		}
 	);
+});
+
+//添加评论
+app.post("/addCom", function(req, resp, next) {
+	// let imgs = req.body.imgs;
+	let cno = req.body.cno;
+	let content = req.body.content;
+	let orderId = req.body.orderId;
+	let imgs = req.body.imgs;
+	let comDate = new Date().Format("yyyy-MM-dd hh:mm:ss");
+	connection.query(
+		"INSERT INTO pinglun SET  ?",
+		{
+			cno: cno,
+			content: content,
+			orderId: orderId,
+			commentsStatus: 1, //未审核
+			comDate: comDate,
+			imgs: imgs,
+		},
+		function(err, res, fields) {
+			if (err) {
+				resp.send({ statusCode: 0, msg: "评论失败" });
+				return;
+			} else {
+				resp.send({ statusCode: 200, msg: "评论成功" });
+				return;
+			}
+		}
+	);
+});
+//获取评论信息
+app.post("/getCom", function(req, resp, next) {
+	connection.query(`SELECT * FROM pinglun,shop_order where pinglun.orderId=shop_order.orderId`, function(
+		err,
+		res,
+		fields
+	) {
+		if (err) {
+			throw err;
+		} else {
+			resp.send(res);
+		}
+	});
+});
+// 删除评论
+app.post("/deleteCom", function(req, resp, next) {
+	let commentsId = req.body.commentsId;
+	connection.query(`delete from pinglun where commentsId="${commentsId}"`, function(err, res, fields) {
+		if (err) {
+			resp.send({ statusCode: 0, msg: "删除失败" });
+			return;
+		} else {
+			resp.send({ statusCode: 200, msg: "删除成功" });
+			return;
+		}
+	});
+});
+// 处理评论状态
+app.post("/comState", function(req, resp, next) {
+	let commentsId = req.body.commentsId;
+	// let processingTime = req.body.processingTime;
+	connection.query(`UPDATE pinglun SET  commentsStatus= 0 where commentsId="${commentsId}"`, function(
+		err,
+		res,
+		fields
+	) {
+		if (err) {
+			resp.send({ statusCode: 0, msg: "处理失败" });
+			return;
+		} else {
+			resp.send({ statusCode: 200, msg: "处理成功" });
+			return;
+		}
+	});
 });
 
 // 监听端口

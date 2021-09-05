@@ -15,23 +15,20 @@
 			><el-col :span="8">
 				<el-card shadow="hover" body-style="border:2px">
 					<img
-						src="https://shopstatic.vivo.com.cn/vivoshop/commodity/20201009/20201009113301272241_original.jpg"
+						src="../../assets/img/1.jpg"
 						alt=""
 						style="width:100%;height:100%;border-bottom:1px solid #f47920"
 					/> </el-card></el-col
 			><el-col :span="8">
 				<el-card shadow="hover">
 					<img
-						src="https://shopstatic.vivo.com.cn/vivoshop/commodity/20201009/2020100911330780357_original.jpg"
+						src="../../assets/img/2.jpg"
 						alt=""
 						style="width:100%;height:100%;border-bottom:1px solid #f3715c"
 					/> </el-card></el-col
 			><el-col :span="8">
 				<el-card shadow="hover">
-					<img
-						src="https://shopstatic.vivo.com.cn/vivoshop/commodity/20201009/20201009113313982828_original.jpg"
-						alt=""
-						style="width:100%;height:100%;border-bottom:1px solid #1d953f"
+					<img src="../../assets/img/3.jpg" alt="" style="width:100%;height:100%;border-bottom:1px solid #1d953f"
 				/></el-card>
 			</el-col>
 		</el-row>

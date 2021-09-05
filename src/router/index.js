@@ -121,6 +121,10 @@ export default new Router({
 					path: "/admin/customer_list",
 					component: () => import("@/views/admin/components/customer_list"),
 				},
+				{
+					path: "/admin/comments_list",
+					component: () => import("@/views/admin/components/comments_list"),
+				},
 			],
 		},
 	],

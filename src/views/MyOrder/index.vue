@@ -23,13 +23,15 @@
 			<el-table-column prop="goods_name" label="商品名" width="150" align="center"> </el-table-column>
 			<el-table-column prop="goods_amount" label="数量" width="70" align="center"> </el-table-column>
 			<el-table-column prop="goods_price" label="价格" align="center" width="70"></el-table-column>
-			<el-table-column prop="goods_canshu" label="参数" show-overflow-tooltip align="center" width="280">
+			<el-table-column prop="goods_canshu" label="参数" show-overflow-tooltip align="center" width="250">
 			</el-table-column>
 			<el-table-column label="处理状态" align="center">
 				<template slot-scope="scope">
 					<span v-if="scope.row.processingState === 0">已处理</span>
 					<span v-else>未处理</span>
 				</template>
+			</el-table-column>
+			<el-table-column prop="createDate" label="下单时间" show-overflow-tooltip align="center" width="130">
 			</el-table-column>
 			<el-table-column prop="processingTime" label="处理时间" show-overflow-tooltip align="center" width="130">
 			</el-table-column>
@@ -46,6 +48,7 @@
 						删除
 					</el-tag>
 					<el-tag
+						v-if="scope.row.processingState === 0"
 						type="success"
 						effect="dark"
 						size="small"
@@ -124,8 +127,8 @@
 					path: "addCom",
 					query: {
 						orderId: row.orderId,
-						goods_no: row.goods_no,
-						con: row.cno,
+						// goods_no: row.goods_no,
+						cno: row.cno,
 					},
 				});
 			},

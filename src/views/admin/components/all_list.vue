@@ -44,11 +44,13 @@
 				</el-card>
 			</el-col>
 		</el-row>
+		<div style="width:75px;font-size:20px;margin:10px auto;color:#9999">RANK</div>
+		<el-divider content-position="center" style="border:3px"><h2 style="font-size:22px">品牌销量TOP10</h2></el-divider>
 		<div class="plist">
 			<el-table
 				v-loading="loading"
 				element-loading-text="拼命加载中"
-				:data="tableData.slice((currentPage - 1) * pagesize, currentPage * pagesize)"
+				:data="tableData"
 				border
 				style="width: 100%"
 				:row-class-name="tableRowClassName"
@@ -59,18 +61,6 @@
 				<el-table-column prop="goods_price" label="总额" width="200" align="center"> </el-table-column>
 				<el-table-column prop="rank" label="销量" align="center"> </el-table-column>
 			</el-table>
-		</div>
-		<div style="float:right;margin-top:30px;font-size:20px">
-			<el-row
-				><el-col :span="8">共{{ total }}条</el-col
-				><el-col :span="16"
-					><el-pagination
-						background
-						layout="prev, pager, next"
-						:total="total"
-						@current-change="current_change"
-					></el-pagination></el-col
-			></el-row>
 		</div>
 	</div>
 </template>
@@ -85,9 +75,7 @@
 				orderCount: 0,
 				todayOrderCount: 0,
 				income: 0,
-				total: 0, //默认数据总数
-				pagesize: 8, //每页的数据条数
-				currentPage: 1, //默认开始页面
+				sumPrices: 0,
 			};
 		},
 		methods: {
@@ -125,6 +113,7 @@
 			},
 			getRank() {
 				this.$http.post("http://localhost:8080/getRank", {}).then(res => {
+					console.log(res);
 					res.data.forEach(item => {
 						for (let attr in item) {
 							if (attr === "sum(goods_amount)") {
@@ -133,9 +122,10 @@
 								item["rank"] = v;
 							}
 						}
+						item.goods_price = item.goods_price * item.rank;
 					});
+
 					this.tableData = res.data;
-					this.total = this.tableData.length;
 				});
 				setTimeout(() => {
 					this.loading = false;
@@ -177,5 +167,10 @@
 	}
 	.el-table .n3 {
 		background: #f0f9eb;
+	}
+	.el-divider {
+		margin: 20px 0 20px 0;
+		background: 0 0;
+		border-top: 3px solid #f66f0052;
 	}
 </style>
